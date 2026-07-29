@@ -19,12 +19,12 @@ resource "azurerm_search_service" "search" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                       = "hrcopilot-dev-kv"
-  resource_group_name        = azurerm_resource_group.main.name
-  location                   = azurerm_resource_group.main.location
-  tenant_id                  = data.azurerm_client_config.current.tenant_id
-  sku_name                   = "standard"
-  enable_rbac_authorization  = true
+  name                      = "hrcopilot-dev-kv"
+  resource_group_name       = azurerm_resource_group.main.name
+  location                  = azurerm_resource_group.main.location
+  tenant_id                 = data.azurerm_client_config.current.tenant_id
+  sku_name                  = "standard"
+  enable_rbac_authorization = true
 }
 
 resource "azurerm_storage_table" "employees" {
