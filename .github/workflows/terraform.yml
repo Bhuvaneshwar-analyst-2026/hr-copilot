@@ -52,3 +52,30 @@ jobs:
 
           terraform state show azurerm_service_plan.app >/dev/null 2>&1 || \
           terraform import azurerm_service_plan.app "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/hrcopilot-dev-rg/providers/Microsoft.Web/serverFarms/hrcopilot-dev-plan"
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -input=false -out=tfplan
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve tfplan
+
+      - name: Set up Python
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: pip install -r requirements.txt
+
+      - name: Deploy HR Copilot to Azure Web App
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: hrcopilot-dev-app
+          package: .
