@@ -46,6 +46,10 @@ resource "azurerm_linux_web_app" "agent" {
   location            = azurerm_resource_group.main.location
   service_plan_id     = azurerm_service_plan.app.id
 
+  app_settings = {
+  SCM_DO_BUILD_DURING_DEPLOYMENT = "true"
+}
+
   site_config {
     app_command_line = "gunicorn --bind=0.0.0.0:8000 app:app"
 
