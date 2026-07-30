@@ -53,6 +53,12 @@ jobs:
           terraform state show azurerm_service_plan.app >/dev/null 2>&1 || \
           terraform import azurerm_service_plan.app "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/hrcopilot-dev-rg/providers/Microsoft.Web/serverFarms/hrcopilot-dev-plan"
 
+                    terraform state show azurerm_storage_table.employees >/dev/null 2>&1 || \
+          terraform import azurerm_storage_table.employees "https://hrcopilotdevdocs.table.core.windows.net/Tables('Employees')"
+
+          terraform state show azurerm_linux_web_app.agent >/dev/null 2>&1 || \
+          terraform import azurerm_linux_web_app.agent "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/hrcopilot-dev-rg/providers/Microsoft.Web/sites/hrcopilot-dev-app"
+
       - name: Terraform Validate
         run: terraform validate
 
