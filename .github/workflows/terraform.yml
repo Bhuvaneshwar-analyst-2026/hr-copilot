@@ -36,6 +36,11 @@ jobs:
       - name: Terraform Initialize
         run: terraform init -reconfigure
 
+      - name: Import existing resource group
+        run: |
+          terraform state show azurerm_resource_group.main >/dev/null 2>&1 || \
+          terraform import azurerm_resource_group.main "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/hrcopilot-dev-rg"
+
       - name: Terraform Validate
         run: terraform validate
 
