@@ -10,13 +10,82 @@ DEPLOYMENT_NAME = os.environ.get("AZURE_OPENAI_DEPLOYMENT")
 
 @app.route("/")
 def home():
-    return jsonify(
-        {
-            "status": "running",
-            "message": "HR Copilot Agent is running",
-        }
-    )
+    return """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>HR Copilot</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 700px;
+                margin: 40px auto;
+                padding: 20px;
+            }
 
+            textarea {
+                width: 100%;
+                height: 100px;
+                padding: 10px;
+            }
+
+            button {
+                margin-top: 10px;
+                padding: 10px 18px;
+                cursor: pointer;
+            }
+
+            #answer {
+                margin-top: 20px;
+                padding: 15px;
+                background: #f4f4f4;
+                white-space: pre-wrap;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>HR Copilot</h1>
+        <p>Ask an HR-related question.</p>
+
+        <textarea id="question" placeholder="Type your question here"></textarea>
+        <br>
+        <button onclick="askQuestion()">Ask</button>
+
+        <div id="answer"></div>
+
+        <script>
+            async function askQuestion() {
+                const question = document.getElementById("question").value;
+                const answerBox = document.getElementById("answer");
+
+                if (!question.trim()) {
+                    answerBox.textContent = "Please enter a question.";
+                    return;
+                }
+
+                answerBox.textContent = "Thinking...";
+
+                try {
+                    const response = await fetch("/chat", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ question: question })
+                    });
+
+                    const data = await response.json();
+
+                    answerBox.textContent =
+                        data.answer || data.error || "No response received.";
+                } catch (error) {
+                    answerBox.textContent = "Unable to contact HR Copilot.";
+                }
+            }
+        </script>
+    </body>
+    </html>
+    """
 
 @app.route("/chat", methods=["POST"])
 def chat():
